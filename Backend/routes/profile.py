@@ -17,9 +17,7 @@ router = APIRouter(tags=["Profile"])
 @router.post("/profile")
 async def profile(profile: StudentProfileCreate, user=Depends(get_user), db = Depends(get_db)):
   try:    
-    user_id = str(user["_id"])
-    
-    if await db["profiles"].find_one({"user_id": user_id}):
+    if await db["profiles"].find_one({"user_id": user["_id"]}):
       raise HTTPException(status_code=400, detail="Profile already exists for this user.")
     
     education_level = profile.education_level
@@ -30,7 +28,7 @@ async def profile(profile: StudentProfileCreate, user=Depends(get_user), db = De
     learning_style = profile.learning_style    
 
     profile_data = {
-      "user_id": user_id,
+      "user_id": user["_id"],
       "education_level": education_level,
       "interests": interests,
       "skills": skills,
@@ -72,9 +70,7 @@ async def profile(profile: StudentProfileCreate, user=Depends(get_user), db = De
 @router.get("/profile")
 async def get_profile(user=Depends(get_user), db = Depends(get_db)):
   try:    
-    user_id = str(user["_id"])
-    
-    profile = await db["profiles"].find_one({"user_id": user_id})
+    profile = await db["profiles"].find_one({"user_id": user["_id"]})
 
     if not profile:
       raise HTTPException(status_code=404, detail="Profile not found for this user.")
@@ -105,10 +101,8 @@ async def get_profile(user=Depends(get_user), db = Depends(get_db)):
   
 @router.patch("/profile")
 async def update_profile(payload: StudentProfileUpdate, user=Depends(get_user), db = Depends(get_db)):
-  try:
-    user_id = str(user["_id"])
-    
-    profile = await db["profiles"].find_one({"user_id": user_id})
+  try:    
+    profile = await db["profiles"].find_one({"user_id": user["_id"]})
 
     if not profile:
       raise HTTPException(status_code=404, detail="Profile not found for this user.")
@@ -116,7 +110,7 @@ async def update_profile(payload: StudentProfileUpdate, user=Depends(get_user), 
     update_data = payload.model_dump(exclude_unset=True)
     update_data["updated_at"] = datetime.now()
 
-    await db["profiles"].update_one({"user_id": user_id}, {"$set": update_data})
+    await db["profiles"].update_one({"user_id": user["_id"]}, {"$set": update_data})
 
     return {
       "success": True,
