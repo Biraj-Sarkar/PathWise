@@ -1,9 +1,10 @@
 dotenv
-jwt
-bcrypt
 fastapi
 pydantic
 uvicorn
 google-genai
 pymongo
 motor
+pyjwt
+bcrypt
+email-validator
