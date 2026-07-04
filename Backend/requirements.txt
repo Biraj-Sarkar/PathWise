@@ -2,7 +2,6 @@ jwt
 bcrypt
 fastapi
 pydantic
-bson
 uvicorn
 google-genai
 pymongo
