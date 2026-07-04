@@ -114,7 +114,7 @@ async def login(credentials: LoginRequest, response: Response, db = Depends(get_
       value=refresh_token,
       httponly=True,
       secure=is_production,
-      samesite="lax",
+      samesite="none" if is_production else "lax",
       max_age=7 * 24 * 60 * 60
     )
 
