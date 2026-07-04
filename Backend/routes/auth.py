@@ -59,7 +59,7 @@ async def register(user: UserCreate, response: Response, db = Depends(get_db)):
       value=refresh_token,
       httponly=True,
       secure=is_production,
-      samesite="lax",
+      samesite="none" if is_production else "lax",
       max_age=7 * 24 * 60 * 60
     )
 
@@ -201,7 +201,7 @@ async def refresh(response: Response, refresh_token: str = Cookie(None, alias="r
       value=refresh_token,
       httponly=True,
       secure=is_production,
-      samesite="lax",
+      samesite="none" if is_production else "lax",
       max_age=7 * 24 * 60 * 60
     )
 
