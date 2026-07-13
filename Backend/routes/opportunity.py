@@ -56,20 +56,20 @@ async def cache_opportunities(user: dict[str, Any], db):
     if not opportunity_exists:
       await db["opportunities"].insert_one({
         "fingerprint": fingerprint,
-        **opportunity.model_dump()
+        **opportunity.model_dump(mode="json")
       })
   
   payload = {
-    "career_guidance": response.career_guidance.model_dump(),
-    "internships": [opp.model_dump() for opp in response.opportunities if opp.type == "Internship"],
-    "jobs": [opp.model_dump() for opp in response.opportunities if opp.type == "Job"],
-    "courses": [opp.model_dump() for opp in response.opportunities if opp.type == "Course"],
-    "certifications": [opp.model_dump() for opp in response.opportunities if opp.type == "Certification"],
-    "hackathons": [opp.model_dump() for opp in response.opportunities if opp.type == "Hackathon"],
-    "competitions": [opp.model_dump() for opp in response.opportunities if opp.type == "Competition"],
-    "scholarships": [opp.model_dump() for opp in response.opportunities if opp.type == "Scholarship"],
-    "bootcamps": [opp.model_dump() for opp in response.opportunities if opp.type == "Bootcamp"],
-    "workshops": [opp.model_dump() for opp in response.opportunities if opp.type == "Workshop"]
+    "career_guidance": response.career_guidance.model_dump(mode="json"),
+    "internships": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Internship"],
+    "jobs": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Job"],
+    "courses": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Course"],
+    "certifications": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Certification"],
+    "hackathons": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Hackathon"],
+    "competitions": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Competition"],
+    "scholarships": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Scholarship"],
+    "bootcamps": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Bootcamp"],
+    "workshops": [opp.model_dump(mode="json") for opp in response.opportunities if opp.type == "Workshop"]
   }
 
   await db["user_cached_opportunities"].update_one(
@@ -174,22 +174,22 @@ async def search_opportunities(request: FilterOpportunities, user=Depends(get_us
       if not opportunity_exists:
         await db["opportunities"].insert_one({
           "fingerprint": fingerprint,
-          **r.model_dump()
+          **r.model_dump(mode="json")
         })
     
     await db["user_cached_opportunities"].update_one(
       {"user_id": user["_id"]},
       {"$set": {"recommendations": {
         "career_guidance": {},
-        "internships": [r.model_dump() for r in results.results if r.type == "Internship"],
-        "jobs": [r.model_dump() for r in results.results if r.type == "Job"],
-        "courses": [r.model_dump() for r in results.results if r.type == "Course"],
-        "certifications": [r.model_dump() for r in results.results if r.type == "Certification"],
-        "hackathons": [r.model_dump() for r in results.results if r.type == "Hackathon"],
-        "competitions": [r.model_dump() for r in results.results if r.type == "Competition"],
-        "scholarships": [r.model_dump() for r in results.results if r.type == "Scholarship"],
-        "bootcamps": [r.model_dump() for r in results.results if r.type == "Bootcamp"],
-        "workshops": [r.model_dump() for r in results.results if r.type == "Workshop"]
+        "internships": [r.model_dump(mode="json") for r in results.results if r.type == "Internship"],
+        "jobs": [r.model_dump(mode="json") for r in results.results if r.type == "Job"],
+        "courses": [r.model_dump(mode="json") for r in results.results if r.type == "Course"],
+        "certifications": [r.model_dump(mode="json") for r in results.results if r.type == "Certification"],
+        "hackathons": [r.model_dump(mode="json") for r in results.results if r.type == "Hackathon"],
+        "competitions": [r.model_dump(mode="json") for r in results.results if r.type == "Competition"],
+        "scholarships": [r.model_dump(mode="json") for r in results.results if r.type == "Scholarship"],
+        "bootcamps": [r.model_dump(mode="json") for r in results.results if r.type == "Bootcamp"],
+        "workshops": [r.model_dump(mode="json") for r in results.results if r.type == "Workshop"]
       }, "updated_at": datetime.now()}},
       upsert=True)
 

@@ -277,7 +277,7 @@ async def quiz_review(quiz_review_request: QuizReviewRequest, user=Depends(get_u
       )
 
       ai_review = quiz_review_explanation(prompt)
-      review["ai_review"] = ai_review.model_dump() if hasattr(ai_review, "model_dump") else ai_review
+      review["ai_review"] = ai_review.model_dump(mode="json") if hasattr(ai_review, "model_dump") else ai_review
       reviews.append(review)
 
       progress = await progress_tracking(user_id, review["topic"], review["subtopic"], db)

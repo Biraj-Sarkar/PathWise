@@ -62,7 +62,7 @@ async def learning_chat(learning_request: LearningRequest, user: dict[str, Any],
     "sender": "assistant",
     "topic": topic,
     "subtopic": subtopic,
-    "message": json.dumps(msg_to_store),
+    "message": msg_to_store,
     "timestamp": datetime.now()
   })
 
@@ -154,7 +154,7 @@ async def generate_example(example_request: ExampleRequest, user: dict[str, Any]
     "sender": "assistant",
     "topic": topic,
     "subtopic": subtopic,
-    "message": json.dumps(msg_to_store),
+    "message": msg_to_store,
     "timestamp": datetime.now()
   })
 
@@ -223,7 +223,7 @@ async def get_roadmap(topic: str, user: dict[str, Any], db):
   await db["roadmaps"].update_one(
     {"user_id": user["_id"], "topic": topic},
     {"$set": {
-      "roadmap": roadmap.model_dump(),
+      "roadmap": roadmap.model_dump(mode="json"),
       "updated_at": datetime.now()
     }},
     upsert=True

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 from bson import ObjectId
 
-from models.Learning import QuizRequest, QuizResult
+from models.Learning import QuizRequest
 from services.prompts import quizPrompt
 from services.callAI import quiz_generate
 
@@ -31,7 +31,7 @@ async def generate_quiz(quiz_request: QuizRequest, user: dict[str, Any], db):
     "user_id": user["_id"],
     "topic": topic,
     "difficulty_level": difficulty_level,
-    **(generated_quiz.model_dump() if hasattr(generated_quiz, "model_dump") else generated_quiz),
+    **(generated_quiz.model_dump(mode="json") if hasattr(generated_quiz, "model_dump") else generated_quiz),
     "requested_at": requested_at
   }
 
@@ -42,6 +42,6 @@ async def generate_quiz(quiz_request: QuizRequest, user: dict[str, Any], db):
     "message": "Quiz generated successfully.",
     "data": {
       "quiz_id": str(quiz_document["_id"]),
-      **generated_quiz.model_dump()
+      **generated_quiz.model_dump(mode="json")
     }
   }

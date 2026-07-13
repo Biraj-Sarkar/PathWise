@@ -18,6 +18,19 @@ MODEL_POOL = [
   "gemini-3.5-flash",
 ]
 
+def decode_unicode_escapes(obj):
+  """Recursively walks through a dict/list/string to decode unicode escape sequences."""
+  if isinstance(obj, str):
+    try:
+      return obj.encode('utf-8').decode('unicode_escape')
+    except Exception:
+      return obj
+  elif isinstance(obj, dict):
+    return {k: decode_unicode_escapes(v) for k, v in obj.items()}
+  elif isinstance(obj, list):
+    return [decode_unicode_escapes(item) for item in obj]
+  return obj
+
 def invoke_llm(prompt: str, schema: type[BaseModel] | None = None):
   for model in MODEL_POOL:
     try:
@@ -35,9 +48,15 @@ def invoke_llm(prompt: str, schema: type[BaseModel] | None = None):
       )
       
       if schema:
-        return response.parsed
-
-      return response.text
+        parsed_dict = response.parsed.model_dump()
+        clean_dict = decode_unicode_escapes(parsed_dict)
+        return schema.model_validate(clean_dict)
+      
+      try:
+        parsed_json = json.loads(response.text)
+        return json.dumps(parsed_json, ensure_ascii=False)
+      except Exception:
+        return decode_unicode_escapes(response.text)
     except Exception as e:
       print(f"Error invoking model {model}: {e}")
       continue
